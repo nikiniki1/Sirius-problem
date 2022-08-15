@@ -2,20 +2,22 @@ import numpy as np
 
 
 class Domain:
-    def __init__(self, xs, xe, nx, ys, ye, ny):
+    def __init__(self, xs, xe, nx, ys, ye, ny, lx, ly):
         self.xs = xs
         self.xe = xe
         self.nx = nx
+        self.lx = lx
 
         self.dx = (xe - xs) / nx
-        self.x = np.arange(0, nx + 1) * self.dx
+        self.x = xs + np.arange(0, nx + 1) * self.dx
 
         self.ys = ys
         self.ye = ye
         self.ny = ny
+        self.ly = ly
 
         self.dy = (ye - ys) / ny
-        self.y = np.arange(0, ny + 1) * self.dy
+        self.y = ys + np.arange(0, ny + 1) * self.dy
 
         self.xx, self.yy = np.meshgrid(self.x, self.y)
 
