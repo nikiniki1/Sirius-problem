@@ -35,43 +35,27 @@ def calc_curl(u, v, domains, diff_method):
 def diff_sbp21(f, direction, domain):
     out = np.empty_like(f)
     if direction == 'y':
-        for j in range(1, domain.ny):
-            out[j, :] = (f[j + 1, :] - f[j - 1, :]) / 2.0 / domain.dy
-        out[-1, :] = (f[1, :] - f[-2, :]) / 2.0 / domain.dy
-        out[0, :] = out[-1, :]
+        # Here you need to put standard 2nd order central difference
+        pass
     elif direction == 'x':
-        for i in range(1, domain.nx):
-            out[:, i] = (f[:, i + 1] - f[:, i - 1]) / 2.0 / domain.dx
-        out[:, -1] = (f[:, -1] - f[:, -2]) / domain.dx
-        out[:, 0] = (f[:, 1] - f[:, 0]) / domain.dx
+        # Here you need to put standard 2nd order sbp difference
+        pass
     else:
         raise Exception(f"Error in diff_sbp21. Wrong direction value {direction}!")
     return out
 
 
 def diff_sbp42(f, direction, domain):
-    diff_f = np.empty_like(f)
+    out = np.empty_like(f)
     if direction == 'y':
-        for i in range(2, (domain.ny - 1)):
-            diff_f[i, :] = (f[i-2, :] - 8*f[i-1, :]+8*f[i+1, :]-f[i+2, :])/(12*domain.dy)
-        diff_f[0, :] = (f[-3, :] - 8*f[-2, :]+8*f[1, :]-f[2, :])/(12*domain.dy)
-        diff_f[1, :] = (f[-2, :] - 8*f[0, :]+8*f[2, :]-f[3, :])/(12*domain.dy)
-        diff_f[-2, :] = (f[-4, :] - 8*f[-3, :]+8*f[0, :]-f[1, :])/(12*domain.dy)
-        diff_f[-1, :] = diff_f[0, :]
+        # Here you need to put standard 4th order central difference
+        pass
     elif direction == 'x':
-        for i in range(2, (domain.nx - 1)):
-            diff_f[:, i] = (f[:,i-2] - 8*f[:,i-1]+8*f[:,i+1]-f[:,i+2])/(12*domain.dx)
-        diff_f[:,0] = (-24/17*f[:,0] + 59/34*f[:,1]-4/17*f[:,2]-3/34*f[:,3])/(domain.dx)
-        diff_f[:,1] = (-f[:,0] + f[:,2])/(2*domain.dx)
-        diff_f[:,2] = (4/43*f[:,0] - 59/86*f[:,1]+59/86*f[:,3]-4/43*f[:,4])/(domain.dx)
-        diff_f[:,3] = (3/98*f[:,0] - 59/98*f[:,2]+32/49*f[:,4]-4/49*f[:,5])/(domain.dx)
-        diff_f[:,-1] = (24/17*f[:,-1] - 59/34*f[:,-2]+4/17*f[:,-3]+3/34*f[:,-4])/(domain.dx)
-        diff_f[:,-2] = (f[:,-1] - f[:,-3])/(2*domain.dx)
-        diff_f[:,-3] = (-4/43*f[:,-1] + 59/86*f[:,-2] - 59/86*f[:,-4] + 4/43*f[:,-5])/(domain.dx)
-        diff_f[:,-4] = (-3/98*f[:,-1] + 59/98*f[:,-3] - 32/49*f[:,-5] + 4/49*f[:,-6])/(domain.dx)
+        # Here you need to put standard 4th order sbp difference
+        pass
     else:
         raise Exception(f"Error in diff_sbp42. Wrong direction value {direction}!")
-    return diff_f
+    return out
 
 
 def sbp_SAT_penalty_two_block(tend, f, direction, domains, diff_method_name):
@@ -131,12 +115,16 @@ def sbp_SAT_penalty_two_block(tend, f, direction, domains, diff_method_name):
 def interp_1d_sbp21_2to1_ratio(f, direction):
     if direction == "coarse2fine":
         out = np.empty(2 * f.size - 1)
-        # some code here
-        pass
+        for i in range(f.size - 1):
+            out[2*i] = f[i]
+            out[2*i+1] = (f[i] + f[i+1])/2.0
+        out[-1] = f[-1]
     elif direction == "fine2coarse":
         out = np.empty((f.size + 1) // 2)
-        # some code here
-        pass
+        for i in range(1,out.size-1):
+            out[i] = (f[2*i-1] + 2*f[2*i] +f[2*i+1])/4.0
+        out[0] = (f[-2]  + 2*f[0]  + f[1])/4.0
+        out[-1] = (f[-2] + 2*f[-1] + f[1])/4.0
     else:
         raise Exception(f"Error in interp_1d_sbp21_2to1_ratio. Wrong direction value {direction}!")
     return out
@@ -144,10 +132,19 @@ def interp_1d_sbp21_2to1_ratio(f, direction):
 def interp_1d_sbp42_2to1_ratio(f, direction):
     if direction == "coarse2fine":
         out = np.empty(2 * f.size - 1)
-        pass
+        for i in range(1,f.size - 2):
+            out[2*i] = f[i]
+            out[2*i+1] = (-f[i-1] + 9*f[i] + 9*f[i+1] - f[i+2])/16.0
+        out[0] = f[0]
     elif direction == "fine2coarse":
         out = np.empty((f.size + 1) // 2)
-        pass
+        for i in range(2,out.size-1):
+            out[i] = (-f[2*i-3] +9*f[2*i-1] + 16*f[2*i]+ 9*f[2*i+1] - f[2*i+3])/32.0
+        out[0]  = (-f[-4] +9*f[-2] + 16*f[0]+ 9*f[1] - f[3])/32.0
+        out[1]  = (-f[-3] +9*f[0] + 16*f[1]+ 9*f[2] - f[4])/32.0
+        out[2]  = (-f[-2] +9*f[1] + 16*f[2]+ 9*f[3] - f[5])/32.0
+        out[-2] = (-f[-5] +9*f[-3] + 16*f[-2]+ 9*f[-1] - f[2])/32.0
+        out[-1] = (-f[-4] +9*f[-2] + 16*f[-1]+ 9*f[1] - f[3])/32.0
     else:
         raise Exception(f"Error in interp_1d_sbp42_2to1_ratio. Wrong direction value {direction}!")
     return out
