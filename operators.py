@@ -98,7 +98,7 @@ def sbp_SAT_penalty_two_block(tend, f, direction, domains, diff_method_name):
         if domains[0].ny == domains[1].ny:
             interp_method = lambda x, y: x
         elif domains[0].ny == 2 * domains[1].ny:
-            interp_method = interp_1d_sbp21_4to2_ratio
+            interp_method = interp_1d_sbp42_2to1_ratio
         else:
             raise Exception(f"Error in sbp_SAT_penalty_two_block. Unknown resolution ratio!")
 

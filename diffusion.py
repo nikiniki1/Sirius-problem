@@ -62,7 +62,7 @@ def sbp_SAT_penalty_two_block_diffusion(tend, f, coefs, domains, diff2_method_na
         if domains[0].ny == 2 * domains[1].ny:
             interp_method = interp_1d_sbp21_2to1_ratio
     else:
-        raise Exception(f"Error in sbp_SAT_penalty_two_block_diffusion. Diff method {diff_method_name} "
+        raise Exception(f"Error in sbp_SAT_penalty_two_block_diffusion. Diff method {diff2_method_name} "
                         f"is not supported!")
 
     fl0, fr0 = boundary_method(f[0], domains[0])

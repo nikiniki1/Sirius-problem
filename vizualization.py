@@ -149,7 +149,7 @@ def surf_interpolated_field(f, domains, surf_nx=100, surf_ny=100):
     return surf
 
 
-def imshow_interpolated_field(f, domains, surf_nx=100, surf_ny=100):
+def imshow_interpolated_field(f, domains,savefig, title, surf_nx=100, surf_ny=100):
 
     x = np.concatenate([domain.xx.flatten() for domain in domains])
     y = np.concatenate([domain.yy.flatten() for domain in domains])
@@ -171,6 +171,9 @@ def imshow_interpolated_field(f, domains, surf_nx=100, surf_ny=100):
     grid_z = scipy.interpolate.griddata((x, y), z, (grid_x, grid_y), method='linear')
 
     imshow = ax.imshow(grid_z.T, cmap='seismic')
+    plt.title(title)
+    if savefig is True and title is not None:
+        plt.savefig(f'{title}.png', dpi = 100)
     plt.show()
 
     return imshow
