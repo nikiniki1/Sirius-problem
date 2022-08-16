@@ -1,5 +1,5 @@
 import operators as op
-from state import State
+from state import State, GridField
 
 
 class SweLinearOperator:
@@ -55,3 +55,18 @@ class SweAdvectiveFormOperator:
         return State(-1.0 * self.g * gx + self.pcori * state.v - du_dx * state.u - du_dy * state.v,
                      -1.0 * self.g * gy - self.pcori * state.u - dv_dx * state.u - dv_dy * state.v,
                      -1.0 * div)
+
+
+class SweOnlyAdvection:
+
+    def __init__(self, g, pcori, diff_method):
+        self.g = g
+        self.pcori = pcori
+        self.diff_method = diff_method
+
+    def calc_rhs(self, state, domains):
+        gx, gy = op.calc_grad(state.h, domains, self.diff_method)
+
+        return State(GridField.zeros(domains),
+                     GridField.zeros(domains),
+                     - 1.0 * state.u * gx - 1.0 * state.v * gy)

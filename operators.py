@@ -146,29 +146,27 @@ def interp_1d_sbp21_2to1_ratio(f, direction):
         raise Exception(f"Error in interp_1d_sbp21_2to1_ratio. Wrong direction value {direction}!")
     return out
 
-
 def interp_1d_sbp42_2to1_ratio(f, direction):
     if direction == "coarse2fine":
         out = np.empty(2 * f.size - 1)
-        for i in range(1, f.size - 2):
-            out[2 * i] = f[i]
-            out[2 * i + 1] = (-f[i - 1] + 9 * f[i] + 9 * f[i + 1] - f[i + 2]) / 16.0
-
+        for i in range(1,f.size - 2):
+            out[2*i] = f[i]
+            out[2*i+1] = (-f[i-1] + 9*f[i] + 9*f[i+1] - f[i+2])/16.0
         out[0] = f[0]
-        out[1] = (-f[-2] + 9 * f[0] + 9 * f[1] - f[2]) / 16.0
-        out[-2] = (-f[-3] + 9 * f[-2] + 9 * f[-1] - f[1]) / 16.0
+        out[1] = (-f[-2] + 9*f[0] + 9*f[1] - f[2])/16.0
+        out[-2] = (-f[-3] + 9*f[-2] + 9*f[-1] - f[1])/16.0
         out[-3] = f[-2]
         out[-1] = f[-1]
     elif direction == "fine2coarse":
         out = np.empty((f.size + 1) // 2)
-        for i in range(3, out.size - 3):
-            out[i] = (-f[2 * i - 3] + 9 * f[2 * i - 1] + 16 * f[2 * i] + 9 * f[2 * i + 1] - f[2 * i + 3]) / 32.0
-        out[0] = (-f[-4] + 9 * f[-2] + 16 * f[0] + 9 * f[1] - f[3]) / 32.0
-        out[1] = (-f[-2] + 9 * f[1] + 16 * f[2] + 9 * f[3] - f[5]) / 32.0
-        out[2] = (-f[1] + 9 * f[3] + 16 * f[4] + 9 * f[5] - f[7]) / 32.0
-        out[-3] = (-f[-8] + 9 * f[-6] + 16 * f[-5] + 9 * f[-4] - f[-2]) / 32.0
-        out[-2] = (-f[-6] + 9 * f[-4] + 16 * f[-3] + 9 * f[-2] - f[1]) / 32.0
-        out[-1] = (-f[-4] + 9 * f[-2] + 16 * f[-1] + 9 * f[1] - f[3]) / 32.0
+        for i in range(3,out.size-3):
+            out[i] = (-f[2*i-3] +9*f[2*i-1] + 16*f[2*i]+ 9*f[2*i+1] - f[2*i+3])/32.0
+        out[0]  = (-f[-4] +9*f[-2] + 16*f[0]+ 9*f[1] - f[3])/32.0
+        out[1]  = (-f[-2] +9*f[1] + 16*f[2]+ 9*f[3] - f[5])/32.0
+        out[2]  = (-f[1] +9*f[3] + 16*f[4]+ 9*f[5] - f[7])/32.0
+        out[-3] = (-f[-8] +9*f[-6] + 16*f[-5]+ 9*f[-4] - f[-2])/32.0
+        out[-2] = (-f[-6] +9*f[-4] + 16*f[-3]+ 9*f[-2] - f[1])/32.0
+        out[-1] = (-f[-4] +9*f[-2] + 16*f[-1]+ 9*f[1] - f[3])/32.0
     else:
         raise Exception(f"Error in interp_1d_sbp42_2to1_ratio. Wrong direction value {direction}!")
     return out

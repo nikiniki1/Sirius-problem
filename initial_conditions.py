@@ -20,6 +20,38 @@ def gaussian_hill(domains, h_mean, xc=None, yc=None, sigma_x=100.0, sigma_y=100.
         state.h[ind] = h_mean + np.exp(-sigma_x * dx ** 2 - sigma_y * dy ** 2)
     return state
 
+def gaussian_hill_1rotor(domains, h_mean, xc=None, yc=None, sigma_x=100.0, sigma_y=100.0):
+    state = State.zeros(domains)
+
+    xc = xc if xc is not None else domains[0].lx / 2
+    yc = yc if yc is not None else domains[0].ly / 2
+    for ind, domain in enumerate(domains):
+        for i in range(domain.nx + 1):
+            for j in range(domain.ny + 1):
+                state.u[ind][j,i] =  100*np.sin(np.pi*domain.x[i]/(2 * np.pi * 6371.22 * 1000.0))*np.cos(np.pi*domain.y[j]/(2 * np.pi * 6371.22 * 1000.0))
+                state.v[ind][j,i] = -100*np.cos(np.pi*domain.x[i]/(2 * np.pi * 6371.22 * 1000.0))*np.sin(np.pi*domain.y[j]/(2 * np.pi * 6371.22 * 1000.0))
+
+        dx = (domain.xx - 0.8 * xc) / domain.lx
+        dy = (domain.yy - 0.8 * yc) / domain.ly
+        state.h[ind] = h_mean + np.exp(-sigma_x * dx ** 2 - sigma_y * dy ** 2)
+    return state
+
+def gaussian_hill_2rotor(domains, h_mean, xc=None, yc=None, sigma_x=100.0, sigma_y=100.0):
+    state = State.zeros(domains)
+
+    xc = xc if xc is not None else domains[0].lx / 2
+    yc = yc if yc is not None else domains[0].ly / 2
+    for ind, domain in enumerate(domains):
+        for i in range(domain.nx + 1):
+            for j in range(domain.ny + 1):
+                state.u[ind][j,i] =  100*np.sin(np.pi*domain.x[i]/(2 * np.pi * 6371.22 * 1000.0)*2)*np.cos(np.pi*domain.y[j]/(2 * np.pi * 6371.22 * 1000.0))
+                state.v[ind][j,i] = -100*np.cos(np.pi*domain.x[i]/(2 * np.pi * 6371.22 * 1000.0)*2)*np.sin(np.pi*domain.y[j]/(2 * np.pi * 6371.22 * 1000.0))
+
+        dx = (domain.xx - 1.0 * xc) / domain.lx
+        dy = (domain.yy - 1.0 * yc) / domain.ly
+        state.h[ind] = h_mean + np.exp(-sigma_x * dx ** 2 - sigma_y * dy ** 2)
+    return state
+
 def geostrophic_balance(domains, pcori, g, h_mean):
 
     state = State.zeros(domains)
