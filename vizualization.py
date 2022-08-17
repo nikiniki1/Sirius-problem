@@ -149,7 +149,7 @@ def surf_interpolated_field(f, domains, surf_nx=100, surf_ny=100):
     return surf
 
 
-def imshow_interpolated_field(f, domains,savefig, title, surf_nx=100, surf_ny=100):
+def imshow_interpolated_field(f, domains, savefig, title, surf_nx=100, surf_ny=100):
 
     x = np.concatenate([domain.xx.flatten() for domain in domains])
     y = np.concatenate([domain.yy.flatten() for domain in domains])

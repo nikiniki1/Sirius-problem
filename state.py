@@ -26,7 +26,7 @@ class GridField:
 
     @classmethod
     def ones(cls, domains):
-        return cls([np.ones((domain.ny + 1, domain.nx + 1)) for domain in domains])
+        return cls([100.0*np.ones((domain.ny + 1, domain.nx + 1)) for domain in domains])
 
     def __add__(self, other):
         if type(other) == GridField:
@@ -59,6 +59,10 @@ class State:
     @classmethod
     def zeros(cls, domains):
         return cls(GridField.zeros(domains), GridField.zeros(domains), GridField.zeros(domains))
+
+    @classmethod
+    def ones(cls, domains):
+        return cls(GridField.ones(domains), GridField.ones(domains), GridField.zeros(domains))
 
     def __add__(self, other):
         return State(self.u + other.u, self.v + other.v, self.h + other.h)
